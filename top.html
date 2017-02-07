@@ -1,20 +1,33 @@
 <!doctype html>
 <html>
     <head>
-        <title>Top 5 Scores</title>
+        <title>Top 5</title>
     </head>
     <body>
         <div id="app">
-            <h3>Top 5 Scores</h3>
-            <ul>
-                <li v-for="player in sortedplayers" >{{ player.name}} - {{ player.score }}</li>
-            </ul>
+            <div class="container">
+                <h1 class="ui header">Top 5</h1>
+                <div class="row">
+                    <div v-for="player in sortedplayers" class="col s12 m2">
+                        <div class="card">
+                            <div class="card-image">
+                                <img :src="player.avatar">
+                                <span class="card-title">{{ player.name }}</span>
+                            </div>
+                            <div class="card-content">
+                                {{ player.score }} points
+                            </div>   
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul id="messages"></ul>
-
+        
         <script src="/socket.io/socket.io.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.3/vue.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
         <script>
 
             new Vue({
@@ -23,19 +36,17 @@
                     players: [],
                     sortedplayers : [],
                 },
-                created(){
-                    console.log('vue is ready');
+                created(){      
                     var socket = io();
                     socket.on('leaders', function(data){
-                        this.players = data;
-                        console.log('got ini players');
+                        this.players = data; 
                     }.bind(this));
-
-                    socket.on('chat message', function(msg){                     
+                    socket.on('chat message', function(msg){
                         for (var i in this.players){
                             if (this.players[i].name == msg.old_val.name){
                                 this.players[i]['name'] = msg.new_val.name;
                                 this.players[i]['score'] = msg.new_val.score;
+                                this.players[i]['avatar'] = msg.new_val.avatar;
                                 return;
                             }
                         }
@@ -50,7 +61,7 @@
                     }
                 }
             });
-           
+
         </script>
     </body>
 </html>
